@@ -17,13 +17,11 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.    *
 *                                                                            *
 ******************************************************************************/
-
-//---------------------------------------------------------------------------
-using System;
-using System.Runtime.InteropServices;
-
 namespace USBHIDDRIVER.USB
 {
+    using System;
+    using System.Runtime.InteropServices;
+
     internal sealed class HidApiDeclarations
     {
         // API Declarations for communicating with HID-class devices.

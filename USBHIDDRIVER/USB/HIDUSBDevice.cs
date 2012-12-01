@@ -374,24 +374,31 @@ namespace USBHIDDRIVER.USB
         /// </summary>
         public void readData()
         {
-            if (dataReadingThread.ThreadState.ToString() == "Unstarted")
-            {   //start the thread
-                dataReadingThread.Start();
-                Thread.Sleep(0);
-            }
-            else if (dataReadingThread.ThreadState.ToString() == "Running")
+            switch (dataReadingThread.ThreadState)
             {
-                //Stop the Thread
-                dataReadingThread.Abort();
-            }
-            else
-            {
-                //create Read Thread
-                dataReadingThread = new Thread(new ThreadStart(readDataThread));
+                case ThreadState.Unstarted:
+                    {
+                        //start the thread
+                        dataReadingThread.Start();
+                        Thread.Sleep(0);
+                        break;
+                    }
+                case ThreadState.Running:
+                    {
+                        //Stop the Thread
+                        dataReadingThread.Abort();
+                        break;
+                    }
+                default:
+                    {
+                        //create Read Thread
+                        dataReadingThread = new Thread(new ThreadStart(readDataThread));
 
-                //start the thread
-                dataReadingThread.Start();
-                Thread.Sleep(0);
+                        //start the thread
+                        dataReadingThread.Start();
+                        Thread.Sleep(0);
+                        break;
+                    }
             }
         }
 

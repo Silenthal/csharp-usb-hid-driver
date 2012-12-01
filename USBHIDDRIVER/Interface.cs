@@ -3,7 +3,7 @@
 * HID USB DRIVER - FLORIAN LEITNER                                           *
 * Copyright 2007 - Florian Leitner | http://www.florian-leitner.de           *
 * mail@florian-leitner.de                                                    *
-*                                                                            *   
+*                                                                            *
 * This file is part of HID USB DRIVER.                                       *
 *                                                                            *
 *   HID USB DRIVER is free software; you can redistribute it and/or modify   *
@@ -17,14 +17,14 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.    *
 *                                                                            *
 ******************************************************************************/
+
 //---------------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
 namespace USBHIDDRIVER
 {
+    using System;
+    using System.Threading;
+
     /// <summary>
     /// Interface for the HID USB Driver.
     /// </summary>
@@ -47,7 +47,7 @@ namespace USBHIDDRIVER
         /// </summary>
         /// <param name="vid">The vendor id of the USB device (e.g. vid_06ba)</param>
         /// <param name="pid">The product id of the USB device (e.g. pid_ffff)</param>
-       public  USBInterface(string vid, string pid)
+        public USBInterface(string vid, string pid)
         {
             this.usbVID = vid;
             this.usbPID = pid;
@@ -65,11 +65,11 @@ namespace USBHIDDRIVER
         }
 
         /// <summary>
-        /// Establishes a connection to the USB device. 
-        /// You can only establish a connection to a device if you have used the construct with vendor AND product id. 
-        /// Otherwise it will connect to a device which has the same vendor id is specified, 
-        /// this means if more than one device with these vendor id is plugged in, 
-        /// you can't be determine to which one you will connect. 
+        /// Establishes a connection to the USB device.
+        /// You can only establish a connection to a device if you have used the construct with vendor AND product id.
+        /// Otherwise it will connect to a device which has the same vendor id is specified,
+        /// this means if more than one device with these vendor id is plugged in,
+        /// you can't be determine to which one you will connect.
         /// </summary>
         /// <returns>False if an error occurs.</returns>
         public bool Connect()
@@ -90,7 +90,7 @@ namespace USBHIDDRIVER
         }
 
         /// <summary>
-        /// Returns a list of devices with the vendor id (or vendor and product id) 
+        /// Returns a list of devices with the vendor id (or vendor and product id)
         /// specified in the constructor.
         /// This function is needed if you want to know how many (and which) devices with the specified
         /// vendor id are plugged in.
@@ -103,7 +103,7 @@ namespace USBHIDDRIVER
 
         /// <summary>
         /// Writes the specified bytes to the USB device.
-        /// If the array length exceeds 64, the array while be divided into several 
+        /// If the array length exceeds 64, the array while be divided into several
         /// arrays with each containing 64 bytes.
         /// The 0-63 byte of the array is sent first, then the 64-127 byte and so on.
         /// </summary>
@@ -111,43 +111,44 @@ namespace USBHIDDRIVER
         /// <returns>Returns true if all bytes have been written successfully</returns>
         public bool write(Byte[] bytes)
         {
-                int byteCount = bytes.Length;
-                int bytePos = 0;
-               
-                bool success = true;
+            int byteCount = bytes.Length;
+            int bytePos = 0;
 
-                //build hid reports with 64 bytes
-                while (bytePos <= byteCount-1)
+            bool success = true;
+
+            //build hid reports with 64 bytes
+            while (bytePos <= byteCount - 1)
+            {
+                if (bytePos > 0)
                 {
-                    if (bytePos > 0)
-                    {
-                        Thread.Sleep(5);
-                    }
-                    Byte[] transfByte = new byte[64];
-                    for (int u = 0; u < 64; u++)
-                    {
-                        if (bytePos < byteCount)
-                        {
-                            transfByte[u] = bytes[bytePos];
-                            bytePos++;
-                        }
-                        else 
-                        {
-                            transfByte[u] = 0;
-                        }
-                    }
-                    //send the report
-                    if (!this.usbdevice.writeData(transfByte))
-                    {
-                        success = false;
-                    }
                     Thread.Sleep(5);
                 }
-                return success;
+                Byte[] transfByte = new byte[64];
+                for (int u = 0; u < 64; u++)
+                {
+                    if (bytePos < byteCount)
+                    {
+                        transfByte[u] = bytes[bytePos];
+                        bytePos++;
+                    }
+                    else
+                    {
+                        transfByte[u] = 0;
+                    }
+                }
+
+                //send the report
+                if (!this.usbdevice.writeData(transfByte))
+                {
+                    success = false;
+                }
+                Thread.Sleep(5);
+            }
+            return success;
         }
 
         /// <summary>
-        /// Starts reading. 
+        /// Starts reading.
         /// If you execute this command a thread is started which listens to the USB device and waits for data.
         /// </summary>
         public void startRead()
