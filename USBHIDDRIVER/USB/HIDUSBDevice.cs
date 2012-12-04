@@ -19,20 +19,19 @@
 ******************************************************************************/
 
 //---------------------------------------------------------------------------
-using System;
-using System.Collections;
-using System.Threading;
 
 namespace USBHIDDRIVER.USB
 {
+    using System;
+    using System.Collections;
+    using System.Threading;
+
     /// <summary>
     ///
     /// </summary>
     public class HIDUSBDevice : IDisposable
     {
         private bool disposed = false;
-
-        private Thread usbThread;
 
         /*Variables --------------------------------------------------------------------*/
         private String vendorID;    //Vendor ID of the Device
@@ -197,7 +196,6 @@ namespace USBHIDDRIVER.USB
         public int getDevice()
         {
             //no device found yet
-            bool deviceFound = false;
             this.deviceCount = 0;
             this.devicePath = string.Empty;
 
@@ -293,7 +291,7 @@ namespace USBHIDDRIVER.USB
                         success = myOutputReport.Write(OutputReportBuffer, myUSB.HidHandle);
                     }
                 }
-                catch (System.AccessViolationException ex)
+                catch (AccessViolationException)
                 {
                     success = false;
                 }
@@ -435,7 +433,6 @@ namespace USBHIDDRIVER.USB
         /// </summary>
         public void disconnectDevice()
         {
-            usbThread.Abort();
             myUSB.CT_CloseHandle(myUSB.HidHandle);
         }
 
@@ -629,7 +626,7 @@ namespace USBHIDDRIVER.USB
                 {
                     Success = ProtectedWrite(deviceHandle, reportBuffer);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
 
@@ -674,7 +671,7 @@ namespace USBHIDDRIVER.USB
 
                     Success = (Result == 0) ? false : true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
 

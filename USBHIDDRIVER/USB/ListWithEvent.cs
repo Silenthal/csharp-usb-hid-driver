@@ -3,7 +3,7 @@
 * HID USB DRIVER - FLORIAN LEITNER                                           *
 * Copyright 2007 - Florian Leitner | http://www.florian-leitner.de           *
 * mail@florian-leitner.de                                                    *
-*                                                                            *   
+*                                                                            *
 * This file is part of HID USB DRIVER.                                       *
 *                                                                            *
 *   HID USB DRIVER is free software; you can redistribute it and/or modify   *
@@ -17,58 +17,65 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.    *
 *                                                                            *
 ******************************************************************************/
-//---------------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace USBHIDDRIVER.List
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
-    /// A class that works just like ArrayList, but sends event
-    /// notifications whenever the list changes
+    /// Represents a generic <see cref="System.Collections.Generic.List&lt;T>"/>, with notifications on item additions.
     /// </summary>
-    public class ListWithEvent : System.Collections.ArrayList
+    public class ListWithEvent<T> : List<T>
     {
+        private object syncRoot = new object();
 
         /// <summary>
-        /// An event that clients can use to be notified whenever the
-        /// elements of the list change
+        /// Gets an object that can be used to synchronize access to the <see cref="ListWithEvent&lt;T>"/>.
         /// </summary>
-        public event System.EventHandler Changed;
-
-        /// <summary>
-        /// Invoke the Changed event; called whenever list changes
-        /// </summary>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        protected virtual void OnChanged(System.EventArgs e)
+        public object SyncRoot
         {
-            if (Changed != null)
+            get
             {
-                Changed(this, e);
+                return syncRoot;
             }
         }
 
-        // Override some of the methods that can change the list;
-        // invoke event after each:
         /// <summary>
-        /// Fügt am Ende von <see cref="T:System.Collections.ArrayList"></see> ein Objekt hinzu.
+        /// Occurs when an item is added to the <see cref="ListWithEvent&lt;T>"/>.
         /// </summary>
-        /// <param name="value">Das <see cref="T:System.Object"></see>, das am Ende der <see cref="T:System.Collections.ArrayList"></see> hinzugefügt werden soll. Der Wert kann null sein.</param>
-        /// <returns>
-        /// Der <see cref="T:System.Collections.ArrayList"></see>-Index, an dem value hinzugefügt wurde.
-        /// </returns>
-        /// <exception cref="T:System.NotSupportedException"><see cref="T:System.Collections.ArrayList"></see> ist schreibgeschützt.- oder -<see cref="T:System.Collections.ArrayList"></see> hat eine feste Größe. </exception>
-        public override int Add(object value)
+        public event EventHandler ItemAdded;
+
+        /// <summary>
+        /// Raises the <see cref="ItemAdded"/> event with the provided arguments.
+        /// </summary>
+        /// <param name="e">Arguments of the event being raised.</param>
+        protected virtual void OnItemAdded(System.EventArgs e)
         {
-            int i = base.Add(value);
-            OnChanged(System.EventArgs.Empty);
-            return i;
+            if (ItemAdded != null)
+            {
+                ItemAdded(this, e);
+            }
         }
-    
+
+        /// <summary>
+        /// Adds an object to the end of the <see cref="ListWithEvent&lt;T>"/>.
+        /// </summary>
+        /// <param name="item">The object to be added to the end of the <see cref="ListWithEvent&lt;T>"/>.</param>
+        public new void Add(T item)
+        {
+            base.Add(item);
+            OnItemAdded(EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Adds the elements of the specified collection to the end of the <see cref="ListWithEvent&lt;T>"/>.
+        /// </summary>
+        /// <param name="collection">The collection whose elements should be added to the end of the <see cref="ListWithEvent&lt;T>"/>. The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.</param>
+        public new void AddRange(IEnumerable<T> collection)
+        {
+            base.AddRange(collection);
+            OnItemAdded(EventArgs.Empty);
+        }
     }
-
-    
 }
-    
-

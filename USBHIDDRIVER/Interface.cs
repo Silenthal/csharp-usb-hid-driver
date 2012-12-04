@@ -24,6 +24,7 @@ namespace USBHIDDRIVER
 {
     using System;
     using System.Threading;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Interface for the HID USB Driver.
@@ -40,7 +41,7 @@ namespace USBHIDDRIVER
         /// <summary>
         /// Buffer for incomming data.
         /// </summary>
-        public static USBHIDDRIVER.List.ListWithEvent usbBuffer = new USBHIDDRIVER.List.ListWithEvent();
+        public static USBHIDDRIVER.List.ListWithEvent<byte[]> usbBuffer = new USBHIDDRIVER.List.ListWithEvent<byte[]>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="USBInterface"/> class.
@@ -173,7 +174,7 @@ namespace USBHIDDRIVER
         /// <param name="eHandler">The event handler method.</param>
         public void enableUsbBufferEvent(System.EventHandler eHandler)
         {
-            usbBuffer.Changed += eHandler;
+            usbBuffer.ItemAdded += eHandler;
         }
     }
 }

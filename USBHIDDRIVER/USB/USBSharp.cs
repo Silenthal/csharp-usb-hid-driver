@@ -785,16 +785,5 @@ namespace USBHIDDRIVER.USB
         {
             return SetupDiDestroyDeviceInfoList(pPHIDP_PREPARSED_DATA);
         }
-
-        internal USBHIDDRIVER.USB.HidApiDeclarations HidApiDeclarations
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-            set
-            {
-            }
-        }
     }
 }
